@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Video Transcriber - Transcribe Videos con IA",
-  description: "Transcribe videos y audios de hasta 500 MB con inteligencia artificial. Soporta MP4, WebM, MP3, WAV y más formatos.",
+  description: "Transcribe videos y audios de hasta 300 MB con inteligencia artificial. Soporta MP4, WebM, MP3, WAV y más formatos.",
   keywords: ["transcripción", "video", "audio", "IA", "speech to text", "ASR", "Next.js"],
   authors: [{ name: "Z.ai Team" }],
   icons: {

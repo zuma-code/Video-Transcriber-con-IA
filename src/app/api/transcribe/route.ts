@@ -1,16 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import ZAI from 'z-ai-web-dev-sdk'
 
-// Configure max file size (500 MB)
-export const config = {
-  api: {
-    bodyParser: {
-      sizeLimit: '500mb',
-    },
-    responseLimit: false,
-  },
-}
-
 export async function POST(request: NextRequest) {
   const startTime = Date.now()
   
@@ -25,11 +15,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Validate file size (500 MB max)
-    const MAX_SIZE = 500 * 1024 * 1024
+    const MAX_SIZE = 300 * 1024 * 1024
     if (file.size > MAX_SIZE) {
       return NextResponse.json(
-        { error: `El archivo excede el tamaño máximo de 500 MB. Tamaño actual: ${(file.size / 1024 / 1024).toFixed(2)} MB` },
+        { error: `El archivo excede el tamaño máximo de 300 MB. Tamaño actual: ${(file.size / 1024 / 1024).toFixed(2)} MB` },
         { status: 400 }
       )
     }
@@ -55,19 +44,16 @@ export async function POST(request: NextRequest) {
 
     console.log(`[Transcribe] Processing file: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`)
 
-    // Convert file to base64
     const arrayBuffer = await file.arrayBuffer()
     const buffer = Buffer.from(arrayBuffer)
     const base64Audio = buffer.toString('base64')
 
     console.log(`[Transcribe] File converted to base64, length: ${base64Audio.length} chars`)
 
-    // Initialize ZAI SDK
     const zai = await ZAI.create()
 
     console.log('[Transcribe] Sending to ASR service...')
 
-    // Call ASR service
     const response = await zai.audio.asr.create({
       file_base64: base64Audio
     })

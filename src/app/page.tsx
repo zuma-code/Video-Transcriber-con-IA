@@ -38,7 +38,7 @@ export default function Home() {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { toast } = useToast()
 
-  const MAX_FILE_SIZE = 500 * 1024 * 1024 // 500 MB
+  const MAX_FILE_SIZE = 300 * 1024 * 1024
   const ACCEPTED_TYPES = [
     'video/mp4', 'video/webm', 'video/ogg', 'video/quicktime',
     'audio/mpeg', 'audio/wav', 'audio/ogg', 'audio/m4a', 'audio/mp3',
@@ -241,13 +241,15 @@ export default function Home() {
                       : ''
                 }`}
               >
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="video/*,audio/*,.mp4,.webm,.ogg,.mov,.mp3,.wav,.m4a"
-                  onChange={handleFileSelect}
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                />
+                {!file && (
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="video/*,audio/*,.mp4,.webm,.ogg,.mov,.mp3,.wav,.m4a"
+                    onChange={handleFileSelect}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  />
+                )}
 
                 {file ? (
                   <div className="flex flex-col items-center gap-4">
@@ -321,7 +323,7 @@ export default function Home() {
                       <Badge variant="secondary">M4A</Badge>
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      Tamaño máximo: 500 MB
+                      Tamaño máximo: 300 MB
                     </p>
                   </div>
                 )}
