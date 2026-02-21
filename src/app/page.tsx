@@ -418,7 +418,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="border-t bg-background mt-auto">
         <div className="container mx-auto px-4 py-4 text-center text-sm text-muted-foreground">
-          <p>Transcribe tus videos y audios de hasta 500 MB con inteligencia artificial</p>
+          <p>Transcribe tus videos y audios de hasta 300 MB con inteligencia artificial</p>
         </div>
       </footer>
     </div>
