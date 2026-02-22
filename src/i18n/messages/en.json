@@ -28,6 +28,11 @@
     "footer": "Transcribe your videos and audios up to 300 MB with artificial intelligence",
     "languageEnglish": "English",
     "languageSpanish": "Spanish"
+  },
+  "Meta": {
+    "title": "Video Transcriber - Transcribe Videos with AI",
+    "description": "Transcribe videos and audio files up to 300 MB with artificial intelligence. Supports MP4, WebM, MP3, WAV and more formats.",
+    "ogTitle": "Video Transcriber",
+    "ogDescription": "Transcribe videos and audios with AI"
   }
 }
-
