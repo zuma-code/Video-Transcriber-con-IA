@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import ZAI from 'z-ai-web-dev-sdk'
+import { GoogleGenerativeAI } from '@google/generative-ai'
 
 export async function POST(request: NextRequest) {
   const startTime = Date.now()
@@ -44,30 +44,57 @@ export async function POST(request: NextRequest) {
 
     console.log(`[Transcribe] Processing file: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`)
 
+    const apiKey = process.env.GEMINI_API_KEY
+    if (!apiKey) {
+      return NextResponse.json(
+        { error: 'GEMINI_API_KEY no está configurada en las variables de entorno' },
+        { status: 500 }
+      )
+    }
+
     const arrayBuffer = await file.arrayBuffer()
     const buffer = Buffer.from(arrayBuffer)
     const base64Audio = buffer.toString('base64')
 
     console.log(`[Transcribe] File converted to base64, length: ${base64Audio.length} chars`)
 
-    const zai = await ZAI.create()
-
-    console.log('[Transcribe] Sending to ASR service...')
-
-    const response = await zai.audio.asr.create({
-      file_base64: base64Audio
+    const genAI = new GoogleGenerativeAI(apiKey)
+    const model = genAI.getGenerativeModel({
+      model: 'gemini-2.0-flash'
     })
+
+    const mimeType = file.type || 'audio/mpeg'
+
+    const prompt = 'Transcribe el siguiente audio de forma precisa. Devuelve solo el texto transcrito.'
+
+    const result = await model.generateContent({
+      contents: [
+        {
+          role: 'user',
+          parts: [
+            { text: prompt },
+            {
+              inlineData: {
+                mimeType,
+                data: base64Audio
+              }
+            }
+          ]
+        }
+      ]
+    })
+
+    const text = result.response.text()
 
     const processingTime = Date.now() - startTime
 
     console.log(`[Transcribe] Transcription completed in ${processingTime}ms`)
 
-    // Calculate word count
-    const wordCount = response.text ? response.text.trim().split(/\s+/).filter(w => w.length > 0).length : 0
+    const wordCount = text ? text.trim().split(/\s+/).filter(w => w.length > 0).length : 0
 
     return NextResponse.json({
       success: true,
-      text: response.text || '',
+      text: text || '',
       wordCount,
       processingTime,
       fileName: file.name,
