@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
 
     if (!file) {
       return NextResponse.json(
-        { error: 'No se ha proporcionado ningún archivo' },
+        { error: 'No file was provided' },
         { status: 400 }
       )
     }
@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     const MAX_SIZE = 300 * 1024 * 1024
     if (file.size > MAX_SIZE) {
       return NextResponse.json(
-        { error: `El archivo excede el tamaño máximo de 300 MB. Tamaño actual: ${(file.size / 1024 / 1024).toFixed(2)} MB` },
+        { error: `The file exceeds the maximum size of 300 MB. Current size: ${(file.size / 1024 / 1024).toFixed(2)} MB` },
         { status: 400 }
       )
     }
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
     
     if (!validTypes.includes(file.type) && !hasValidExtension) {
       return NextResponse.json(
-        { error: `Formato de archivo no soportado: ${file.type || 'desconocido'}. Formatos soportados: MP4, WebM, OGG, MOV, MP3, WAV, M4A, AVI, MKV` },
+        { error: `Unsupported file format: ${file.type || 'unknown'}. Supported formats: MP4, WebM, OGG, MOV, MP3, WAV, M4A, AVI, MKV` },
         { status: 400 }
       )
     }
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
     const apiKey = process.env.GEMINI_API_KEY
     if (!apiKey) {
       return NextResponse.json(
-        { error: 'GEMINI_API_KEY no está configurada en las variables de entorno' },
+        { error: 'GEMINI_API_KEY is not configured in the environment variables' },
         { status: 500 }
       )
     }
@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
 
     const mimeType = file.type || 'audio/mpeg'
 
-    const prompt = 'Transcribe el siguiente audio de forma precisa. Devuelve solo el texto transcrito.'
+    const prompt = 'Accurately transcribe the following audio. Return only the transcribed text.'
 
     const result = await model.generateContent({
       contents: [
@@ -106,10 +106,10 @@ export async function POST(request: NextRequest) {
     
     const errorMessage = error instanceof Error 
       ? error.message 
-      : 'Error desconocido al procesar el archivo'
+      : 'Unknown error while processing the file'
     
     return NextResponse.json(
-      { error: `Error en la transcripción: ${errorMessage}` },
+      { error: `Transcription error: ${errorMessage}` },
       { status: 500 }
     )
   }

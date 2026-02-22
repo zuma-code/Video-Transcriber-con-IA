@@ -1,0 +1,33 @@
+{
+  "Home": {
+    "subtitle": "Transcribe videos and audios with AI",
+    "uploadDropActive": "Drop the file here",
+    "uploadDropInactive": "Drag and drop your video or audio",
+    "uploadClickHint": "or click to select a file",
+    "maxSize": "Maximum size: {size}",
+    "processingLabel": "Processing file...",
+    "buttonTranscribe": "Transcribe",
+    "buttonTranscribing": "Transcribing...",
+    "buttonClear": "Clear",
+    "errorFileTooBig": "The file exceeds the maximum size of {maxSize}",
+    "errorUnsupportedFormat": "Unsupported file format. Use: MP4, WebM, OGG, MOV, MP3, WAV, M4A",
+    "errorGenericTranscribe": "Error while transcribing the file",
+    "toastSuccessTitle": "Transcription completed",
+    "toastSuccessDescription": "{count} words processed",
+    "toastErrorTitle": "Transcription error",
+    "toastUnknownError": "Unknown error",
+    "toastCopiedTitle": "Copied",
+    "toastCopiedDescription": "The transcription has been copied to the clipboard",
+    "toastDownloadedTitle": "Downloaded",
+    "toastDownloadedDescription": "The file has been downloaded successfully",
+    "resultTitle": "Transcription",
+    "resultDescription": "{count} words • Processed in {seconds}s",
+    "buttonCopy": "Copy",
+    "buttonCopied": "Copied",
+    "buttonDownload": "Download",
+    "footer": "Transcribe your videos and audios up to 300 MB with artificial intelligence",
+    "languageEnglish": "English",
+    "languageSpanish": "Spanish"
+  }
+}
+

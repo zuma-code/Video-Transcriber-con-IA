@@ -1,23 +1,26 @@
 'use client'
 
-import { useState, useRef, useCallback } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Progress } from '@/components/ui/progress'
-import { Textarea } from '@/components/ui/textarea'
-import { Badge } from '@/components/ui/badge'
-import { 
-  Upload, 
-  FileVideo, 
-  Loader2, 
-  Copy, 
-  Download, 
-  Trash2, 
-  CheckCircle2,
+import {useCallback, useRef, useState, useTransition} from 'react'
+import {Button} from '@/components/ui/button'
+import {Badge} from '@/components/ui/badge'
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/card'
+import {Progress} from '@/components/ui/progress'
+import {Textarea} from '@/components/ui/textarea'
+import {
   AlertCircle,
-  Mic
+  CheckCircle2,
+  Copy,
+  Download,
+  FileVideo,
+  Loader2,
+  Mic,
+  Trash2,
+  Upload,
 } from 'lucide-react'
-import { useToast } from '@/hooks/use-toast'
+import {useToast} from '@/hooks/use-toast'
+import {useLocale, useTranslations} from 'next-intl'
+import {useRouter} from 'next/navigation'
+import {setLocale} from '@/app/actions/setLocale'
 
 interface TranscriptionResult {
   text: string
@@ -35,14 +38,26 @@ export default function Home() {
   const [transcription, setTranscription] = useState<TranscriptionResult | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
+  const [isPending, startTransition] = useTransition()
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const { toast } = useToast()
+  const {toast} = useToast()
+  const t = useTranslations('Home')
+  const locale = useLocale()
+  const router = useRouter()
 
   const MAX_FILE_SIZE = 300 * 1024 * 1024
   const ACCEPTED_TYPES = [
-    'video/mp4', 'video/webm', 'video/ogg', 'video/quicktime',
-    'audio/mpeg', 'audio/wav', 'audio/ogg', 'audio/m4a', 'audio/mp3',
-    'audio/x-wav', 'audio/webm'
+    'video/mp4',
+    'video/webm',
+    'video/ogg',
+    'video/quicktime',
+    'audio/mpeg',
+    'audio/wav',
+    'audio/ogg',
+    'audio/m4a',
+    'audio/mp3',
+    'audio/x-wav',
+    'audio/webm',
   ]
 
   const formatFileSize = (bytes: number): string => {
@@ -55,16 +70,16 @@ export default function Home() {
 
   const validateFile = (file: File): string | null => {
     if (file.size > MAX_FILE_SIZE) {
-      return `El archivo excede el tamaño máximo de ${formatFileSize(MAX_FILE_SIZE)}`
+      return t('errorFileTooBig', {maxSize: formatFileSize(MAX_FILE_SIZE)})
     }
-    
-    const isValidType = ACCEPTED_TYPES.includes(file.type) || 
-      file.name.match(/\.(mp4|webm|ogg|mov|mp3|wav|m4a)$/i)
-    
+
+    const isValidType =
+      ACCEPTED_TYPES.includes(file.type) || file.name.match(/\.(mp4|webm|ogg|mov|mp3|wav|m4a)$/i)
+
     if (!isValidType) {
-      return 'Formato de archivo no soportado. Use: MP4, WebM, OGG, MOV, MP3, WAV, M4A'
+      return t('errorUnsupportedFormat')
     }
-    
+
     return null
   }
 
@@ -138,7 +153,7 @@ export default function Home() {
       const result = await response.json()
 
       if (!response.ok) {
-        throw new Error(result.error || 'Error al transcribir el archivo')
+        throw new Error(result.error || t('errorGenericTranscribe'))
       }
 
       setTranscription({
@@ -150,14 +165,14 @@ export default function Home() {
       })
 
       toast({
-        title: '¡Transcripción completada!',
-        description: `Se procesaron ${result.wordCount} palabras`,
+        title: t('toastSuccessTitle'),
+        description: t('toastSuccessDescription', {count: result.wordCount}),
       })
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Error desconocido'
+      const errorMessage = err instanceof Error ? err.message : t('toastUnknownError')
       setError(errorMessage)
       toast({
-        title: 'Error en la transcripción',
+        title: t('toastErrorTitle'),
         description: errorMessage,
         variant: 'destructive'
       })
@@ -173,8 +188,8 @@ export default function Home() {
     await navigator.clipboard.writeText(transcription.text)
     setCopied(true)
     toast({
-      title: 'Copiado',
-      description: 'La transcripción se ha copiado al portapapeles',
+      title: t('toastCopiedTitle'),
+      description: t('toastCopiedDescription'),
     })
     setTimeout(() => setCopied(false), 2000)
   }
@@ -186,15 +201,15 @@ export default function Home() {
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `${file?.name.split('.')[0] || 'transcripcion'}_transcripcion.txt`
+    a.download = `${file?.name.split('.')[0] || 'transcription'}_transcription.txt`
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
     URL.revokeObjectURL(url)
     
     toast({
-      title: 'Descargado',
-      description: 'El archivo se ha descargado correctamente',
+      title: t('toastDownloadedTitle'),
+      description: t('toastDownloadedDescription'),
     })
   }
 
@@ -212,13 +227,43 @@ export default function Home() {
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-background to-muted/30">
       {/* Header */}
       <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-4 py-4 flex items-center gap-3">
-          <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary">
-            <Mic className="w-5 h-5 text-primary-foreground" />
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary">
+              <Mic className="w-5 h-5 text-primary-foreground" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold">Video Transcriber</h1>
+              <p className="text-sm text-muted-foreground">{t('subtitle')}</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-xl font-bold">Video Transcriber</h1>
-            <p className="text-sm text-muted-foreground">Transcribe videos y audios con IA</p>
+          <div className="flex items-center gap-2">
+            <Button
+              variant={locale === 'en' ? 'default' : 'outline'}
+              size="sm"
+              disabled={isPending || locale === 'en'}
+              onClick={() => {
+                startTransition(async () => {
+                  await setLocale('en')
+                  router.refresh()
+                })
+              }}
+            >
+              EN
+            </Button>
+            <Button
+              variant={locale === 'es' ? 'default' : 'outline'}
+              size="sm"
+              disabled={isPending || locale === 'es'}
+              onClick={() => {
+                startTransition(async () => {
+                  await setLocale('es')
+                  router.refresh()
+                })
+              }}
+            >
+              ES
+            </Button>
           </div>
         </div>
       </header>
@@ -274,12 +319,12 @@ export default function Home() {
                         {isUploading ? (
                           <>
                             <Loader2 className="w-4 h-4 animate-spin" />
-                            Transcribiendo...
+                            Transcribing...
                           </>
                         ) : (
                           <>
                             <Mic className="w-4 h-4" />
-                            Transcribir
+                            Transcribe
                           </>
                         )}
                       </Button>
@@ -293,7 +338,7 @@ export default function Home() {
                         className="gap-2"
                       >
                         <Trash2 className="w-4 h-4" />
-                        Limpiar
+                        Clear
                       </Button>
                     </div>
                   </div>
@@ -308,10 +353,10 @@ export default function Home() {
                     </div>
                     <div>
                       <p className="font-medium text-lg">
-                        {isDragging ? 'Suelta el archivo aquí' : 'Arrastra y suelta tu video o audio'}
+                        {isDragging ? t('uploadDropActive') : t('uploadDropInactive')}
                       </p>
                       <p className="text-sm text-muted-foreground mt-1">
-                        o haz clic para seleccionar un archivo
+                        {t('uploadClickHint')}
                       </p>
                     </div>
                     <div className="flex flex-wrap gap-2 justify-center">
@@ -323,7 +368,7 @@ export default function Home() {
                       <Badge variant="secondary">M4A</Badge>
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      Tamaño máximo: 300 MB
+                      {t('maxSize', {size: '300 MB'})}
                     </p>
                   </div>
                 )}
@@ -338,7 +383,7 @@ export default function Home() {
                 <div className="flex items-center gap-4">
                   <Loader2 className="w-5 h-5 animate-spin text-primary" />
                   <div className="flex-1">
-                    <p className="text-sm font-medium mb-2">Procesando archivo...</p>
+                    <p className="text-sm font-medium mb-2">{t('processingLabel')}</p>
                     <Progress value={uploadProgress} className="h-2" />
                   </div>
                 </div>
@@ -366,10 +411,13 @@ export default function Home() {
                   <div>
                     <CardTitle className="flex items-center gap-2">
                       <CheckCircle2 className="w-5 h-5 text-green-500" />
-                      Transcripción
+                      {t('resultTitle')}
                     </CardTitle>
                     <CardDescription>
-                      {transcription.wordCount} palabras • Procesado en {(transcription.duration / 1000).toFixed(1)}s
+                      {t('resultDescription', {
+                        count: transcription.wordCount,
+                        seconds: (transcription.duration / 1000).toFixed(1),
+                      })}
                     </CardDescription>
                   </div>
                   <div className="flex gap-2">
@@ -382,12 +430,12 @@ export default function Home() {
                       {copied ? (
                         <>
                           <CheckCircle2 className="w-4 h-4 text-green-500" />
-                          Copiado
+                          {t('buttonCopied')}
                         </>
                       ) : (
                         <>
                           <Copy className="w-4 h-4" />
-                          Copiar
+                          {t('buttonCopy')}
                         </>
                       )}
                     </Button>
@@ -398,7 +446,7 @@ export default function Home() {
                       className="gap-2"
                     >
                       <Download className="w-4 h-4" />
-                      Descargar
+                      {t('buttonDownload')}
                     </Button>
                   </div>
                 </div>
@@ -418,7 +466,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="border-t bg-background mt-auto">
         <div className="container mx-auto px-4 py-4 text-center text-sm text-muted-foreground">
-          <p>Transcribe tus videos y audios de hasta 300 MB con inteligencia artificial</p>
+          <p>{t('footer')}</p>
         </div>
       </footer>
     </div>
