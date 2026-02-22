@@ -1,0 +1,38 @@
+{
+  "Home": {
+    "subtitle": "Transcribe videos y audios con IA",
+    "uploadDropActive": "Suelta el archivo aquí",
+    "uploadDropInactive": "Arrastra y suelta tu video o audio",
+    "uploadClickHint": "o haz clic para seleccionar un archivo",
+    "maxSize": "Tamaño máximo: {size}",
+    "processingLabel": "Procesando archivo...",
+    "buttonTranscribe": "Transcribir",
+    "buttonTranscribing": "Transcribiendo...",
+    "buttonClear": "Limpiar",
+    "errorFileTooBig": "El archivo excede el tamaño máximo de {maxSize}",
+    "errorUnsupportedFormat": "Formato de archivo no soportado. Use: MP4, WebM, OGG, MOV, MP3, WAV, M4A",
+    "errorGenericTranscribe": "Error al transcribir el archivo",
+    "toastSuccessTitle": "Transcripción completada",
+    "toastSuccessDescription": "Se procesaron {count} palabras",
+    "toastErrorTitle": "Error en la transcripción",
+    "toastUnknownError": "Error desconocido",
+    "toastCopiedTitle": "Copiado",
+    "toastCopiedDescription": "La transcripción se ha copiado al portapapeles",
+    "toastDownloadedTitle": "Descargado",
+    "toastDownloadedDescription": "El archivo se ha descargado correctamente",
+    "resultTitle": "Transcripción",
+    "resultDescription": "{count} palabras • Procesado en {seconds}s",
+    "buttonCopy": "Copiar",
+    "buttonCopied": "Copiado",
+    "buttonDownload": "Descargar",
+    "footer": "Transcribe tus videos y audios de hasta 300 MB con inteligencia artificial",
+    "languageEnglish": "Inglés",
+    "languageSpanish": "Español"
+  },
+  "Meta": {
+    "title": "Video Transcriber - Transcribe videos con IA",
+    "description": "Transcribe videos y audios de hasta 300 MB con inteligencia artificial. Soporta MP4, WebM, MP3, WAV y más formatos.",
+    "ogTitle": "Video Transcriber",
+    "ogDescription": "Transcribe videos y audios con IA"
+  }
+}

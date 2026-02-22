@@ -1,3 +1,55 @@
+# 🎙️ Video Transcriber with Gemini
+
+Web application to transcribe videos and audio files using the Gemini API.  
+You can upload files up to **300 MB** (MP4, MOV, WebM, MP3, WAV, M4A, etc.) and get the transcription directly in the UI.
+
+## 🚀 Quick Start
+
+```bash
+bun install
+bun run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) to use the app.
+
+### Gemini configuration
+
+1. Create a `.env.local` file in the project root.
+2. Add your Gemini API key:
+
+```env
+GEMINI_API_KEY=YOUR_GEMINI_API_KEY
+```
+
+3. Restart the development server (`bun run dev`).
+
+### Basic flow
+
+- Drag and drop or select a video/audio file (≤ 300 MB).
+- Click **Transcribe**.
+- Wait for the transcription to appear:
+  - You can **copy** the text.
+  - You can **download** the transcription as `.txt`.
+
+> Note: the backend uses `@google/generative-ai` with the `gemini-2.0-flash` model and sends the audio as Base64 data.
+
+### Language support
+
+- The UI is localized with **next-intl**.
+- Supported locales: **English (`en`)** and **Spanish (`es`)**.
+- Use the **EN/ES** toggle in the header to switch the interface language.
+- The selected language is remembered in a cookie across page reloads.
+
+### Known limitations
+
+- **No streaming**: the whole file is uploaded before transcription starts; long files take longer.
+- **File size**: files close to 300 MB may be slower and more likely to hit network or provider limits.
+- **Audio quality**: background noise, music, or multiple speakers can reduce transcription accuracy.
+- **Languages**: quality is best for well-supported languages; less common languages may be less accurate.
+- **Privacy**: audio is sent to Google’s Gemini API; review Google’s policies before using real customer data.
+
+---
+
 # 🚀 Welcome to Z.ai Code Scaffold
 
 A modern, production-ready web application scaffold powered by cutting-edge technologies, designed to accelerate your development with [Z.ai](https://chat.z.ai)'s AI-powered coding assistance.
